@@ -1,0 +1,535 @@
+{
+  "url": "https://api.github.com/gists/f8e5fc20cff0c19a27765e7ce5fe54fe",
+  "forks_url": "https://api.github.com/gists/f8e5fc20cff0c19a27765e7ce5fe54fe/forks",
+  "commits_url": "https://api.github.com/gists/f8e5fc20cff0c19a27765e7ce5fe54fe/commits",
+  "id": "f8e5fc20cff0c19a27765e7ce5fe54fe",
+  "node_id": "G_kwDOBcuSaNoAIGY4ZTVmYzIwY2ZmMGMxOWEyNzc2NWU3Y2U1ZmU1NGZl",
+  "git_pull_url": "https://gist.github.com/f8e5fc20cff0c19a27765e7ce5fe54fe.git",
+  "git_push_url": "https://gist.github.com/f8e5fc20cff0c19a27765e7ce5fe54fe.git",
+  "html_url": "https://gist.github.com/f8e5fc20cff0c19a27765e7ce5fe54fe",
+  "files": {
+    "01_Add_a_worksheet.js": {
+      "filename": "01_Add_a_worksheet.js",
+      "type": "application/javascript",
+      "language": "JavaScript",
+      "raw_url": "https://gist.githubusercontent.com/jade-addin/f8e5fc20cff0c19a27765e7ce5fe54fe/raw/fe1b12a11469f17d6a6ff0ed259708e5bee698ec/01_Add_a_worksheet.js",
+      "size": 414,
+      "truncated": false,
+      "content": "/*Make a worksheet with a name of \"Invoice\"*/\n\nasync function add_a_worksheet(excel) {\n  //  This example will fail if there is already a \n  //  worksheet named \"Invoice\"\n  const sheet = excel.workbook.worksheets.add(\"Invoice\")\n  sheet.activate()\n  await excel.sync();\n}\n\nfunction setup(){\n    show_html('<button id=\"button-1\">Add Worksheet</button>')\n    tag(\"button-1\").onclick = jade.automate(add_a_worksheet)\n}"
+    },
+    "02_Add_a_unique_sheet.js": {
+      "filename": "02_Add_a_unique_sheet.js",
+      "type": "application/javascript",
+      "language": "JavaScript",
+      "raw_url": "https://gist.githubusercontent.com/jade-addin/f8e5fc20cff0c19a27765e7ce5fe54fe/raw/1c5fee2254d76edf545623fdf57778b17a040b2b/02_Add_a_unique_sheet.js",
+      "size": 1195,
+      "truncated": false,
+      "content": "/*Build a worksheet named \"Invoice\", if necessary, append an integer for uniqueness*/\n\nasync function build_worksheet_without_name_conflict_example(excel) {\n  \n  // build a worksheet named \"Invoice\", if necessary, append\n  // an integer for uniqueness\n  \n  const worksheets=excel.workbook.worksheets\n  worksheets.load(\"items\")\n  await excel.sync();\n  \n  for(const ws of worksheets.items){ws.load(\"name\")}\n  await excel.sync();\n  \n  let file_number=1\n  let proposed_name=\"Invoice\"\n  \n  do{\n   let name_found = false\n   for(const ws of worksheets.items){\n      if(ws.name.toLowerCase()===proposed_name.toLowerCase()){\n          name_found = true\n          break\n      }\n    }\n    if(!name_found){break}\n    proposed_name = \"Invoice \" + file_number++\n    console.log(file_number, proposed_name)\n  }while(file_number < 200)\n\n\n  if(file_number >= 200){\n    return // we have too many invoices, let's not go crazy\n  }\n\n  const sheet = excel.workbook.worksheets.add(proposed_name)\n  sheet.activate()\n  await excel.sync()\n  \n}\n\n\nfunction setup(){\n  show_html('<button id=\"button-2\">Build Invoice Sheet</button>')\n  tag(\"button-2\").onclick = jade.automate(build_worksheet_without_name_conflict_example)\n}"
+    },
+    "03_Add_Data_to_Cells.js": {
+      "filename": "03_Add_Data_to_Cells.js",
+      "type": "application/javascript",
+      "language": "JavaScript",
+      "raw_url": "https://gist.githubusercontent.com/jade-addin/f8e5fc20cff0c19a27765e7ce5fe54fe/raw/9f9ee0d0bd0b4f536e817873627b3aca3f64584c/03_Add_Data_to_Cells.js",
+      "size": 1424,
+      "truncated": false,
+      "content": "/*Add data to various cells*/\n\nasync function add_invoice_data(excel) {\n  // get a reference to the active worksheet\n  const sheet = excel.workbook.worksheets.getActiveWorksheet();\n  \n  \n  // company information\n  sheet.getRange(\"A1:A4\").values=[\n      [\"Covefront Laboratories\"],\n      [\"698 Candlewood Lane\"],\n      [\"Cabot Cove, Maine 04456\"],\n      [\"Phone: (207) 555-1212\"]\n  ]\n  \n  // invoice labels\n  sheet.getRange(\"H1\").values=\"INVOICE\"\n  sheet.getRange(\"A7\").values=\"Bill To\"\n  sheet.getRange(\"A15\").values=\"DESCRIPTION\"\n  sheet.getRange(\"F4\").values=\"INVOICE #\"\n  sheet.getRange(\"H4\").values=\"DATE\"\n  sheet.getRange(\"F7\").values=\"CUSTOMER ID\"\n  sheet.getRange(\"H7\").values=\"TERMS\"\n  sheet.getRange(\"F10\").values=\"SYMBOL\"\n  sheet.getRange(\"H10\").values=\"CURRENCY\"\n  sheet.getRange(\"A15\").values=\"DESCRIPTION\"\n  sheet.getRange(\"A31\").values=\"Thank you for your business!\"\n  sheet.getRange(\"A37\").values=\"If you have any questions about this invoice, please contact\"\n  sheet.getRange(\"A38\").values=\"Martin Eddington  (207) 555-1212  meddington@covefrontanalytic.com\"\n  sheet.getRange(\"F31:F34\").values=[\n      [\"SUBTOTAL\"],\n      [\"TAX RATE\"],\n      [\"TAX\"],\n      [\"TOTAL\"]\n      ]\n  sheet.getRange(\"F15:H15\").values=[\n    [\"QTY\",\"PRICE\",\"AMOUNT\"]\n    ]\n  await excel.sync();\n}\n\n\nfunction setup(){\n  show_html('<button id=\"button-3\">Add Data</button>')\n  tag(\"button-3\").onclick = jade.automate(add_invoice_data)\n}\n"
+    },
+    "04_Set_Column_Widths.js": {
+      "filename": "04_Set_Column_Widths.js",
+      "type": "application/javascript",
+      "language": "JavaScript",
+      "raw_url": "https://gist.githubusercontent.com/jade-addin/f8e5fc20cff0c19a27765e7ce5fe54fe/raw/655f65ec9a778434efceddef55277bf568d8b842/04_Set_Column_Widths.js",
+      "size": 805,
+      "truncated": false,
+      "content": "/*Set several columns to different widths*/\n\nasync function set_column_widths(excel) {\n  // get a reference to the active worksheet\n  const sheet = excel.workbook.worksheets.getActiveWorksheet();\n  \n  // set Column Widths    \n  sheet.getRange(\"A1\").format.columnWidth=40\n  sheet.getRange(\"B1\").format.columnWidth=75\n  sheet.getRange(\"C1\").format.columnWidth=105\n  sheet.getRange(\"D1\").format.columnWidth=40\n  sheet.getRange(\"E1\").format.columnWidth=40\n  sheet.getRange(\"F1\").format.columnWidth=40\n  sheet.getRange(\"G1\").format.columnWidth=75\n  sheet.getRange(\"H1\").format.columnWidth=105\n  sheet.getRange(\"I1\").format.columnWidth=70\n  \n  await excel.sync();\n}\n\nfunction setup(){\n  show_html('<button id=\"button-4\">Set Column Widths</button>')\n  tag(\"button-4\").onclick = jade.automate(set_column_widths)\n}"
+    },
+    "05_Set_Row_Height.js": {
+      "filename": "05_Set_Row_Height.js",
+      "type": "application/javascript",
+      "language": "JavaScript",
+      "raw_url": "https://gist.githubusercontent.com/jade-addin/f8e5fc20cff0c19a27765e7ce5fe54fe/raw/97c80f7b0743efe70b225996dcf725f133472513/05_Set_Row_Height.js",
+      "size": 431,
+      "truncated": false,
+      "content": "/*Set the height of row 1*/\nasync function set_row_height(excel) {\n  // get a reference to the active worksheet\n  const sheet = excel.workbook.worksheets.getActiveWorksheet();\n  \n  // set the height of row 1\n  sheet.getRange(\"a1\").getEntireRow().format.rowHeight=40\n\n  await excel.sync();\n}\n\nfunction setup(){\n  show_html('<button id=\"button-5\">Set Row Height</button>')\n  tag(\"button-5\").onclick = jade.automate(set_row_height)\n}\n"
+    },
+    "06_Set_Cell_Font_Size.js": {
+      "filename": "06_Set_Cell_Font_Size.js",
+      "type": "application/javascript",
+      "language": "JavaScript",
+      "raw_url": "https://gist.githubusercontent.com/jade-addin/f8e5fc20cff0c19a27765e7ce5fe54fe/raw/72b61203f9c29d4060cacf0592cbee380ee4afd2/06_Set_Cell_Font_Size.js",
+      "size": 531,
+      "truncated": false,
+      "content": "/*Set the font size of two cells*/\nasync function set_cell_font_size_example(excel) {\n  // get a reference to the active worksheet\n  const sheet = excel.workbook.worksheets.getActiveWorksheet();\n  \n  // set font size\n  sheet.getRange(\"A1\").format.font.size=20\n  sheet.getRange(\"H1\").format.font.size=35\n  sheet.getRange(\"F34:H34\").format.font.size=16\n  \n  \n  await excel.sync();\n}\n\nfunction setup(){\n  show_html('<button id=\"button-6\">Set font size</button>')\n  tag(\"button-6\").onclick = jade.automate(set_cell_font_size_example)\n}"
+    },
+    "07_Set_Cell_Font_Color.js": {
+      "filename": "07_Set_Cell_Font_Color.js",
+      "type": "application/javascript",
+      "language": "JavaScript",
+      "raw_url": "https://gist.githubusercontent.com/jade-addin/f8e5fc20cff0c19a27765e7ce5fe54fe/raw/0416eae799e7defba6b401c5771dd4905f990282/07_Set_Cell_Font_Color.js",
+      "size": 514,
+      "truncated": false,
+      "content": "/*Set the font color of two cells*/\nasync function set_cell_fill_color_example(excel) {\n  // get a reference to the active worksheet\n  const sheet = excel.workbook.worksheets.getActiveWorksheet();\n  \n  // set cell font color\n  sheet.getRange(\"A1\").format.font.color=\"mediumBlue\"\n  sheet.getRange(\"H1\").format.font.color=\"maroon\"\n  \n  await excel.sync();\n}\n\nfunction setup(){\n  show_html('<button id=\"button-7\">Set cell font color</button>')\n  tag(\"button-7\").onclick = jade.automate(set_cell_fill_color_example)\n}\n"
+    },
+    "08_Set_Cell_Indentation.js": {
+      "filename": "08_Set_Cell_Indentation.js",
+      "type": "application/javascript",
+      "language": "JavaScript",
+      "raw_url": "https://gist.githubusercontent.com/jade-addin/f8e5fc20cff0c19a27765e7ce5fe54fe/raw/2950cf7bb05dade1149cc9d2deee2f537707027b/08_Set_Cell_Indentation.js",
+      "size": 659,
+      "truncated": false,
+      "content": "/*Set the indentation level on a set of cells*/\nasync function set_cell_indentation_example(excel) {\n  // get a reference to the active worksheet\n  const sheet = excel.workbook.worksheets.getActiveWorksheet();\n  \n  // set cell indentation\n  sheet.getRange(\"A2:A4\").format.indentLevel=1\n  sheet.getRange(\"A8:A13\").format.indentLevel=1\n  sheet.getRange(\"A7\").format.indentLevel=2\n  sheet.getRange(\"A15\").format.indentLevel=2\n  sheet.getRange(\"F31:F34\").format.indentLevel=2\n\n  \n  await excel.sync();\n}\n\nfunction setup(){\n  show_html('<button id=\"button-8\">Set cell indentation</button>')\n  tag(\"button-8\").onclick = jade.automate(set_cell_indentation_example)\n}"
+    },
+    "09_Merge_Cells.js": {
+      "filename": "09_Merge_Cells.js",
+      "type": "application/javascript",
+      "language": "JavaScript",
+      "raw_url": "https://gist.githubusercontent.com/jade-addin/f8e5fc20cff0c19a27765e7ce5fe54fe/raw/0abafd3529a9662dfa2e2599e81116c03215b87c/09_Merge_Cells.js",
+      "size": 604,
+      "truncated": false,
+      "content": "/*Merge cells and merge cells by rows*/\nasync function merge_cells_example(excel) {\n  // get a reference to the active worksheet\n  const sheet = excel.workbook.worksheets.getActiveWorksheet();\n  \n  // merge cells\n  sheet.getRange(\"A7:C7\").merge()\n  sheet.getRange(\"A15:E15\").merge()\n  sheet.getRange(\"F31:G34\").merge(true)\n  sheet.getRange(\"F4:G10\").merge(true)\n  sheet.getRange(\"A31:E31\").merge()\n  sheet.getRange(\"A37:H38\").merge(true)\n\n  await excel.sync();\n}\n\nfunction setup(){\n  show_html('<button id=\"button-9\">Merge Cells</button>')\n  tag(\"button-9\").onclick = jade.automate(merge_cells_example)\n}"
+    },
+    "10_Set_Cell_Fill_Color.js": {
+      "filename": "10_Set_Cell_Fill_Color.js",
+      "type": "application/javascript",
+      "language": "JavaScript",
+      "raw_url": "https://gist.githubusercontent.com/jade-addin/f8e5fc20cff0c19a27765e7ce5fe54fe/raw/66cac5c8ee722748c0594115ce2bb98748460c10/10_Set_Cell_Fill_Color.js",
+      "size": 616,
+      "truncated": false,
+      "content": "/*Set the background color of two ranges using named colors and hex notation*/\nasync function set_cell_fill_color(excel) {\n  // get a reference to the active worksheet\n  const sheet = excel.workbook.worksheets.getActiveWorksheet();\n  \n  // set cell fill color\n  sheet.getRange(\"A1:J50\").format.fill.color=\"white\"\n  sheet.getRange(\"F31:F34\").format.fill.color=\"lightSteelBlue\"\n  sheet.getRange(\"H31:H34\").format.fill.color=\"#DDDDDD\"\n  \n  await excel.sync();\n}\n\nfunction setup(){\n  show_html('<button id=\"button-10\">Set Cell Background Color</button>')\n  tag(\"button-10\").onclick = jade.automate(set_cell_fill_color)\n}"
+    },
+    "11_Set_Properties_With_Function.js": {
+      "filename": "11_Set_Properties_With_Function.js",
+      "type": "application/javascript",
+      "language": "JavaScript",
+      "raw_url": "https://gist.githubusercontent.com/jade-addin/f8e5fc20cff0c19a27765e7ce5fe54fe/raw/9a886f57952e2f735706afd2a1a07906acbc1a1a/11_Set_Properties_With_Function.js",
+      "size": 907,
+      "truncated": false,
+      "content": "/*Set several properties of a cell with a function*/\nasync function set_cell_properties_with_function_example(excel) {\n  // get a reference to the active worksheet\n  const sheet = excel.workbook.worksheets.getActiveWorksheet();\n  \n  // set several properties of a cell with a function\n  make_header(sheet, \"A7\")\n  make_header(sheet, \"A15\")\n  make_header(sheet, \"F15:H15\")\n  make_header(sheet, \"F4:H4\")\n  make_header(sheet, \"F7:H7\")\n  make_header(sheet, \"F10:H10\")\n\n  await excel.sync();\n}\n\nfunction make_header(sheet, range){\n     sheet.getRange(range).format.fill.color=\"royalBlue\"\n     sheet.getRange(range).format.font.color=\"white\"\n     sheet.getRange(range).format.font.bold=true\n     sheet.getRange(range).format.font.size=12\n}\n\nfunction setup(){\n  show_html('<button id=\"button-11\">Set cell properties</button>')\n  tag(\"button-11\").onclick = jade.automate(set_cell_properties_with_function_example)\n}"
+    },
+    "12_Cell_Horizontal_Alignment.js": {
+      "filename": "12_Cell_Horizontal_Alignment.js",
+      "type": "application/javascript",
+      "language": "JavaScript",
+      "raw_url": "https://gist.githubusercontent.com/jade-addin/f8e5fc20cff0c19a27765e7ce5fe54fe/raw/9a4bb7b9d5e2286f44c6574a1884efaa31832d1b/12_Cell_Horizontal_Alignment.js",
+      "size": 708,
+      "truncated": false,
+      "content": "/*Set the horizontal alignment of ranges to center and to right*/\nasync function cell_alignment_example(excel) {\n  // get a reference to the active worksheet\n  const sheet = excel.workbook.worksheets.getActiveWorksheet();\n  \n // center cells\n  sheet.getRange(\"F4:H15\").format.horizontalAlignment = \"Center\"\n  sheet.getRange(\"F16:F30\").format.horizontalAlignment = \"Center\"\n  sheet.getRange(\"A31:A38\").format.horizontalAlignment = \"Center\"\n  \n  // right align\n  sheet.getRange(\"H1\").format.horizontalAlignment = \"Right\"\n\n  await excel.sync();\n}\n\nfunction setup(){\n  show_html('<button id=\"button-12\">Set cell horizontal alighment</button>')\n  tag(\"button-12\").onclick = jade.automate(cell_alignment_example)\n}"
+    },
+    "13_Cell_Font_Bold.js": {
+      "filename": "13_Cell_Font_Bold.js",
+      "type": "application/javascript",
+      "language": "JavaScript",
+      "raw_url": "https://gist.githubusercontent.com/jade-addin/f8e5fc20cff0c19a27765e7ce5fe54fe/raw/8d36719f2fad707d2ffc030f12ba755dc92222a7/13_Cell_Font_Bold.js",
+      "size": 500,
+      "truncated": false,
+      "content": "/*Set a cell's font to bold*/\nasync function set_cell_font_bold_example(excel) {\n  // get a reference to the active worksheet\n  const sheet = excel.workbook.worksheets.getActiveWorksheet()\n  sheet.getRange(\"F34:H34\").format.font.bold = true\n  \n  // set cells bold\n  sheet.getRange(\"A1:H1\").format.font.bold = true\n\n  await excel.sync();\n}\n\nfunction setup(){\n  show_html('<button id=\"button-13\">Set cell font to bold</button>')\n  tag(\"button-13\").onclick = jade.automate(set_cell_font_bold_example)\n}\n"
+    },
+    "14_Set_Cell_Borders.js": {
+      "filename": "14_Set_Cell_Borders.js",
+      "type": "application/javascript",
+      "language": "JavaScript",
+      "raw_url": "https://gist.githubusercontent.com/jade-addin/f8e5fc20cff0c19a27765e7ce5fe54fe/raw/4420db5e1608475a948837465eb5bf793a579f21/14_Set_Cell_Borders.js",
+      "size": 1071,
+      "truncated": false,
+      "content": "/*Set inside vertical, inside horizontal, and bottom borders*/\nasync function set_cell_borders_example(excel) {\n  // get a reference to the active worksheet\n  const sheet = excel.workbook.worksheets.getActiveWorksheet();\n  \n  // borders\n  let borders = sheet.getRange(\"A30:H30\").format.borders\n  borders.getItem(\"EdgeBottom\").style=\"Continuous\"\n\n  borders = sheet.getRange(\"A16:H30\").format.borders\n  borders.getItem(\"InsideHorizontal\").color=\"lightGrey\"\n  borders.getItem(\"InsideHorizontal\").style=\"dot\"\n  borders.getItem(\"InsideHorizontal\").weight=\"hairline\"\n  \n  borders = sheet.getRange(\"E16:H30\").format.borders\n  borders.getItem(\"InsideVertical\").color=\"lightGrey\"\n  borders.getItem(\"InsideVertical\").style=\"dot\"\n  borders.getItem(\"InsideVertical\").weight=\"hairline\"\n  \n\n  await excel.sync();\n}\n\nfunction setup(){\n    show_html('<button onclick=\"Excel.run(set_cell_borders_example)\">Set cell borders</button>')\n}\nfunction setup(){\n  show_html('<button id=\"button-14\">Set cell borders</button>')\n  tag(\"button-14\").onclick = jade.automate(set_cell_borders_example)\n}"
+    },
+    "15_Set_Cell_Formulas.js": {
+      "filename": "15_Set_Cell_Formulas.js",
+      "type": "application/javascript",
+      "language": "JavaScript",
+      "raw_url": "https://gist.githubusercontent.com/jade-addin/f8e5fc20cff0c19a27765e7ce5fe54fe/raw/f0cdaaa0f4b9aedcfc51e7645160b7084197484d/15_Set_Cell_Formulas.js",
+      "size": 674,
+      "truncated": false,
+      "content": "/*Enter formulas in individual cells and ranges*/\nasync function set_cell_formula_example(excel) {\n  // get a reference to the active worksheet\n  const sheet = excel.workbook.worksheets.getActiveWorksheet();\n  \n  // add formulas\n  sheet.getRange(\"H16:H30\").formulas = '=if(G16=\"\",\"\",product(F16:G16))'\n  sheet.getRange(\"H31\").formulas = \"=sum(H16:H30)\"\n  sheet.getRange(\"H32\").values = 0.06\n  sheet.getRange(\"H33\").formulas = \"=product(H31:H32)\"\n  sheet.getRange(\"H34\").formulas = \"=H31+H33\"\n  \n\n  await excel.sync();\n}\n\nfunction setup(){\n  show_html('<button id=\"button-15\">Set cell formulas</button>')\n  tag(\"button-15\").onclick = jade.automate(set_cell_formula_example)\n}"
+    },
+    "16_Set_Cell_Number_Format.js": {
+      "filename": "16_Set_Cell_Number_Format.js",
+      "type": "application/javascript",
+      "language": "JavaScript",
+      "raw_url": "https://gist.githubusercontent.com/jade-addin/f8e5fc20cff0c19a27765e7ce5fe54fe/raw/3fb2033a82ac2a9ade6637c6c0265de983517687/16_Set_Cell_Number_Format.js",
+      "size": 582,
+      "truncated": false,
+      "content": "/*Set the number format of a cell and a range of cells*/\nasync function set_cell_number_format_example(excel) {\n  // get a reference to the active worksheet\n  const sheet = excel.workbook.worksheets.getActiveWorksheet();\n  \n  // set cell number formats\n  sheet.getRange(\"H16:H33\").numberFormat=\"0.00\"\n  sheet.getRange(\"H34\").numberFormat=\"$ 0.00\"\n  sheet.getRange(\"H32\").numberFormat=\"0.0#%\"\n\n  await excel.sync();\n}\n\nfunction setup(){\n  show_html('<button id=\"button-16\">Set cell number format</button>')\n  tag(\"button-16\").onclick = jade.automate(set_cell_number_format_example)\n}"
+    },
+    "17_Build_Full_Empty_Invoice.js": {
+      "filename": "17_Build_Full_Empty_Invoice.js",
+      "type": "application/javascript",
+      "language": "JavaScript",
+      "raw_url": "https://gist.githubusercontent.com/jade-addin/f8e5fc20cff0c19a27765e7ce5fe54fe/raw/88f953f51c3a9cab1bd3638097277e1d8aa4f63a/17_Build_Full_Empty_Invoice.js",
+      "size": 5465,
+      "truncated": false,
+      "content": "/*Build the full invoice without and customer or product data*/\nasync function build_empty_invoice_example(excel){\n  /*ace.listing:{\"name\":\"Build Invoice\",\"description\":\"Makes a blank invoice.\"}*/\n  \n  const worksheets=excel.workbook.worksheets\n  worksheets.load(\"items\")\n  await excel.sync();\n  \n  for(const ws of worksheets.items){ws.load(\"name\")}\n  await excel.sync();\n  \n  let file_number=1\n  let proposed_name=\"Invoice\"\n  \n  do{\n   let name_found = false\n   for(const ws of worksheets.items){\n      if(ws.name.toLowerCase()===proposed_name.toLowerCase()){\n          name_found = true\n          break\n      }\n    }\n    if(!name_found){break}\n    proposed_name = \"Invoice \" + file_number++\n    console.log(file_number, proposed_name)\n  }while(file_number < 200)\n\n\n  if(file_number >= 200){\n    return // we have too many invoices, let's not go crazy\n  }\n\n  const sheet = excel.workbook.worksheets.add(proposed_name)\n  sheet.activate()\n  await excel.sync()\n\n\n  // add data\n  \n  // company information\n  sheet.getRange(\"A1:A4\").values=[\n      [\"Covefront Laboratories\"],\n      [\"698 Candlewood Lane\"],\n      [\"Cabot Cove, Maine 04456\"],\n      [\"Phone: (207) 555-1212\"]\n  ]\n  \n  // invoice labels\n  sheet.getRange(\"H1\").values=\"INVOICE\"\n  sheet.getRange(\"A7\").values=\"Bill To\"\n  sheet.getRange(\"A15\").values=\"DESCRIPTION\"\n  sheet.getRange(\"F4\").values=\"INVOICE #\"\n  sheet.getRange(\"H4\").values=\"DATE\"\n  sheet.getRange(\"F7\").values=\"CUSTOMER ID\"\n  sheet.getRange(\"H7\").values=\"TERMS\"\n  sheet.getRange(\"A15\").values=\"DESCRIPTION\"\n  sheet.getRange(\"A31\").values=\"Thank you for your business!\"\n  sheet.getRange(\"A37\").values=\"If you have any questions about this invoice, please contact\"\n  sheet.getRange(\"A38\").values=\"Martin Eddington  (207) 555-1212  meddington@covefrontanalytic.com\"\n  sheet.getRange(\"F31:F34\").values=[\n      [\"SUBTOTAL\"],\n      [\"TAX RATE\"],\n      [\"TAX\"],\n      [\"TOTAL\"]\n      ]\n  sheet.getRange(\"F15:H15\").values=[\n      [\"QTY\",\"PRICE\",\"AMOUNT\"]\n      ]\n\n  // set column widths    \n  sheet.getRange(\"A1\").format.columnWidth=40\n  sheet.getRange(\"B1\").format.columnWidth=75\n  sheet.getRange(\"C1\").format.columnWidth=105\n  sheet.getRange(\"D1\").format.columnWidth=40\n  sheet.getRange(\"E1\").format.columnWidth=40\n  sheet.getRange(\"F1\").format.columnWidth=40\n  sheet.getRange(\"G1\").format.columnWidth=75\n  sheet.getRange(\"H1\").format.columnWidth=105\n  sheet.getRange(\"I1\").format.columnWidth=70\n\n  // set the height of row 1\n  sheet.getRange(\"a1\").getEntireRow().format.rowHeight=40\n  \n  // set font size\n  sheet.getRange(\"A1\").format.font.size=20\n  sheet.getRange(\"H1\").format.font.size=35\n\n\n  // set cell fill color\n  sheet.getRange(\"A1:J50\").format.fill.color=\"white\"\n  sheet.getRange(\"F31:F34\").format.fill.color=\"lightSteelBlue\"\n  sheet.getRange(\"H31:H34\").format.fill.color=\"#DDDDDD\"\n  \n  // set cell font color\n  sheet.getRange(\"A1\").format.font.color=\"mediumBlue\"\n  sheet.getRange(\"H1\").format.font.color=\"maroon\"\n\n  // set cell indentation\n  sheet.getRange(\"A2:A4\").format.indentLevel=1\n  sheet.getRange(\"A8:A13\").format.indentLevel=1\n  sheet.getRange(\"A7\").format.indentLevel=2\n  sheet.getRange(\"A15\").format.indentLevel=2\n  sheet.getRange(\"F31:F34\").format.indentLevel=2\n  \n  // set several properties of a cell with a function\n  make_header(sheet, \"A7\")\n  make_header(sheet, \"A15\")\n  make_header(sheet, \"F15:H15\")\n  make_header(sheet, \"F4:H4\")\n  make_header(sheet, \"F7:H7\")\n  \n  // merge cells\n  sheet.getRange(\"A7:C7\").merge()\n  sheet.getRange(\"A15:E15\").merge()\n  sheet.getRange(\"F31:G34\").merge(true)\n  sheet.getRange(\"F4:G8\").merge(true)\n  sheet.getRange(\"A31:E31\").merge()\n  sheet.getRange(\"A37:H38\").merge(true)\n  \n  // center cells\n  sheet.getRange(\"F4:H15\").format.horizontalAlignment = \"Center\"\n  sheet.getRange(\"F16:F30\").format.horizontalAlignment = \"Center\"\n  sheet.getRange(\"A31:A38\").format.horizontalAlignment = \"Center\"\n  \n  // right align\n  sheet.getRange(\"H1\").format.horizontalAlignment = \"Right\"\n  \n  // set cells bold\n  sheet.getRange(\"A1:H1\").format.font.bold = true\n  sheet.getRange(\"F34:H34\").format.font.bold = true\n  \n  // borders\n  let borders = sheet.getRange(\"A30:H30\").format.borders\n  borders.getItem(\"EdgeBottom\").style=\"Continuous\"\n\n  borders = sheet.getRange(\"A16:H30\").format.borders\n  borders.getItem(\"InsideHorizontal\").color=\"lightGrey\"\n  borders.getItem(\"InsideHorizontal\").style=\"dot\"\n  borders.getItem(\"InsideHorizontal\").weight=\"hairline\"\n  \n  borders = sheet.getRange(\"E16:H30\").format.borders\n  borders.getItem(\"InsideVertical\").color=\"lightGrey\"\n  borders.getItem(\"InsideVertical\").style=\"dot\"\n  borders.getItem(\"InsideVertical\").weight=\"hairline\"\n  \n  // add formulas\n  sheet.getRange(\"H16:H30\").formulas = '=if(G16=\"\",\"\",product(F16:G16))'\n  sheet.getRange(\"H31\").formulas = \"=sum(H16:H30)\"\n  sheet.getRange(\"H32\").values = 0.06\n  sheet.getRange(\"H33\").formulas = \"=product(H31:H32)\"\n  sheet.getRange(\"H34\").formulas = \"=H31+H33\"\n  \n  // set cell number formats\n  sheet.getRange(\"H16:H34\").numberFormat=\"0.00\"\n  sheet.getRange(\"H32\").numberFormat=\"0.0#%\"\n\n\n  await excel.sync();\n}\n\nfunction make_header(sheet, range){\n     sheet.getRange(range).format.fill.color=\"royalBlue\"\n     sheet.getRange(range).format.font.color=\"white\"\n     sheet.getRange(range).format.font.bold=true\n     sheet.getRange(range).format.font.size=12\n}\n\nfunction setup(){\n  show_html('<button id=\"button-17\">Build full empty invoice</button>')\n  tag(\"button-17\").onclick = jade.automate(build_empty_invoice_example)\n}"
+    },
+    "18_Full_Application.js": {
+      "filename": "18_Full_Application.js",
+      "type": "application/javascript",
+      "language": "JavaScript",
+      "raw_url": "https://gist.githubusercontent.com/jade-addin/f8e5fc20cff0c19a27765e7ce5fe54fe/raw/18b24b4dd9304a0c3b80b2441106d97acff1341b/18_Full_Application.js",
+      "size": 227,
+      "truncated": false,
+      "content": "/*loads code from a Gist and shows a form*/\nJade.load_gist(\"8867ffecbacc68dc88246a23166745e8\")\nfunction setup(){\n    show_html('<button onclick=\"jade_modules.invoice_complete_example.show_form()\">Show Invoice Form</button>')\n}\n"
+    }
+  },
+  "public": true,
+  "created_at": "2022-01-06T11:12:41Z",
+  "updated_at": "2022-01-06T13:33:16Z",
+  "description": "Invoice Examples: These examples show the steps of building an invoice in Excel",
+  "comments": 0,
+  "user": null,
+  "comments_url": "https://api.github.com/gists/f8e5fc20cff0c19a27765e7ce5fe54fe/comments",
+  "owner": {
+    "login": "jade-addin",
+    "id": 97227368,
+    "node_id": "U_kgDOBcuSaA",
+    "avatar_url": "https://avatars.githubusercontent.com/u/97227368?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/jade-addin",
+    "html_url": "https://github.com/jade-addin",
+    "followers_url": "https://api.github.com/users/jade-addin/followers",
+    "following_url": "https://api.github.com/users/jade-addin/following{/other_user}",
+    "gists_url": "https://api.github.com/users/jade-addin/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/jade-addin/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/jade-addin/subscriptions",
+    "organizations_url": "https://api.github.com/users/jade-addin/orgs",
+    "repos_url": "https://api.github.com/users/jade-addin/repos",
+    "events_url": "https://api.github.com/users/jade-addin/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/jade-addin/received_events",
+    "type": "User",
+    "site_admin": false
+  },
+  "forks": [
+
+  ],
+  "history": [
+    {
+      "user": {
+        "login": "theGove",
+        "id": 24496385,
+        "node_id": "MDQ6VXNlcjI0NDk2Mzg1",
+        "avatar_url": "https://avatars.githubusercontent.com/u/24496385?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/theGove",
+        "html_url": "https://github.com/theGove",
+        "followers_url": "https://api.github.com/users/theGove/followers",
+        "following_url": "https://api.github.com/users/theGove/following{/other_user}",
+        "gists_url": "https://api.github.com/users/theGove/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/theGove/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/theGove/subscriptions",
+        "organizations_url": "https://api.github.com/users/theGove/orgs",
+        "repos_url": "https://api.github.com/users/theGove/repos",
+        "events_url": "https://api.github.com/users/theGove/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/theGove/received_events",
+        "type": "User",
+        "site_admin": false
+      },
+      "version": "58d337e946ed40893229de2a69a5dfe1127c155b",
+      "committed_at": "2022-01-06T13:33:16Z",
+      "change_status": {
+        "total": 2,
+        "additions": 1,
+        "deletions": 1
+      },
+      "url": "https://api.github.com/gists/f8e5fc20cff0c19a27765e7ce5fe54fe/58d337e946ed40893229de2a69a5dfe1127c155b"
+    },
+    {
+      "user": {
+        "login": "theGove",
+        "id": 24496385,
+        "node_id": "MDQ6VXNlcjI0NDk2Mzg1",
+        "avatar_url": "https://avatars.githubusercontent.com/u/24496385?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/theGove",
+        "html_url": "https://github.com/theGove",
+        "followers_url": "https://api.github.com/users/theGove/followers",
+        "following_url": "https://api.github.com/users/theGove/following{/other_user}",
+        "gists_url": "https://api.github.com/users/theGove/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/theGove/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/theGove/subscriptions",
+        "organizations_url": "https://api.github.com/users/theGove/orgs",
+        "repos_url": "https://api.github.com/users/theGove/repos",
+        "events_url": "https://api.github.com/users/theGove/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/theGove/received_events",
+        "type": "User",
+        "site_admin": false
+      },
+      "version": "0a2f18568d0e9644a70146dbc2d5852fef4a123a",
+      "committed_at": "2022-01-06T13:31:47Z",
+      "change_status": {
+        "total": 2,
+        "additions": 1,
+        "deletions": 1
+      },
+      "url": "https://api.github.com/gists/f8e5fc20cff0c19a27765e7ce5fe54fe/0a2f18568d0e9644a70146dbc2d5852fef4a123a"
+    },
+    {
+      "user": {
+        "login": "theGove",
+        "id": 24496385,
+        "node_id": "MDQ6VXNlcjI0NDk2Mzg1",
+        "avatar_url": "https://avatars.githubusercontent.com/u/24496385?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/theGove",
+        "html_url": "https://github.com/theGove",
+        "followers_url": "https://api.github.com/users/theGove/followers",
+        "following_url": "https://api.github.com/users/theGove/following{/other_user}",
+        "gists_url": "https://api.github.com/users/theGove/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/theGove/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/theGove/subscriptions",
+        "organizations_url": "https://api.github.com/users/theGove/orgs",
+        "repos_url": "https://api.github.com/users/theGove/repos",
+        "events_url": "https://api.github.com/users/theGove/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/theGove/received_events",
+        "type": "User",
+        "site_admin": false
+      },
+      "version": "567a04a5a2cbe34758381abec1bc3ed8957de240",
+      "committed_at": "2022-01-06T13:30:22Z",
+      "change_status": {
+        "total": 56,
+        "additions": 38,
+        "deletions": 18
+      },
+      "url": "https://api.github.com/gists/f8e5fc20cff0c19a27765e7ce5fe54fe/567a04a5a2cbe34758381abec1bc3ed8957de240"
+    },
+    {
+      "user": {
+        "login": "theGove",
+        "id": 24496385,
+        "node_id": "MDQ6VXNlcjI0NDk2Mzg1",
+        "avatar_url": "https://avatars.githubusercontent.com/u/24496385?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/theGove",
+        "html_url": "https://github.com/theGove",
+        "followers_url": "https://api.github.com/users/theGove/followers",
+        "following_url": "https://api.github.com/users/theGove/following{/other_user}",
+        "gists_url": "https://api.github.com/users/theGove/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/theGove/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/theGove/subscriptions",
+        "organizations_url": "https://api.github.com/users/theGove/orgs",
+        "repos_url": "https://api.github.com/users/theGove/repos",
+        "events_url": "https://api.github.com/users/theGove/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/theGove/received_events",
+        "type": "User",
+        "site_admin": false
+      },
+      "version": "0678a87bbf440c3cecb180e564f4c8dfef1c8a2f",
+      "committed_at": "2022-01-06T13:04:46Z",
+      "change_status": {
+        "total": 2,
+        "additions": 2,
+        "deletions": 0
+      },
+      "url": "https://api.github.com/gists/f8e5fc20cff0c19a27765e7ce5fe54fe/0678a87bbf440c3cecb180e564f4c8dfef1c8a2f"
+    },
+    {
+      "user": {
+        "login": "jade-addin",
+        "id": 97227368,
+        "node_id": "U_kgDOBcuSaA",
+        "avatar_url": "https://avatars.githubusercontent.com/u/97227368?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/jade-addin",
+        "html_url": "https://github.com/jade-addin",
+        "followers_url": "https://api.github.com/users/jade-addin/followers",
+        "following_url": "https://api.github.com/users/jade-addin/following{/other_user}",
+        "gists_url": "https://api.github.com/users/jade-addin/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/jade-addin/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/jade-addin/subscriptions",
+        "organizations_url": "https://api.github.com/users/jade-addin/orgs",
+        "repos_url": "https://api.github.com/users/jade-addin/repos",
+        "events_url": "https://api.github.com/users/jade-addin/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/jade-addin/received_events",
+        "type": "User",
+        "site_admin": false
+      },
+      "version": "a1f5986b99504b7bad530e4c703ce2af96ef2457",
+      "committed_at": "2022-01-06T13:04:20Z",
+      "change_status": {
+        "total": 0,
+        "additions": 0,
+        "deletions": 0
+      },
+      "url": "https://api.github.com/gists/f8e5fc20cff0c19a27765e7ce5fe54fe/a1f5986b99504b7bad530e4c703ce2af96ef2457"
+    },
+    {
+      "user": {
+        "login": "theGove",
+        "id": 24496385,
+        "node_id": "MDQ6VXNlcjI0NDk2Mzg1",
+        "avatar_url": "https://avatars.githubusercontent.com/u/24496385?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/theGove",
+        "html_url": "https://github.com/theGove",
+        "followers_url": "https://api.github.com/users/theGove/followers",
+        "following_url": "https://api.github.com/users/theGove/following{/other_user}",
+        "gists_url": "https://api.github.com/users/theGove/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/theGove/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/theGove/subscriptions",
+        "organizations_url": "https://api.github.com/users/theGove/orgs",
+        "repos_url": "https://api.github.com/users/theGove/repos",
+        "events_url": "https://api.github.com/users/theGove/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/theGove/received_events",
+        "type": "User",
+        "site_admin": false
+      },
+      "version": "bea2f9b4239c7284be7e91c90dbeb20187400749",
+      "committed_at": "2022-01-06T12:54:53Z",
+      "change_status": {
+        "total": 4,
+        "additions": 3,
+        "deletions": 1
+      },
+      "url": "https://api.github.com/gists/f8e5fc20cff0c19a27765e7ce5fe54fe/bea2f9b4239c7284be7e91c90dbeb20187400749"
+    },
+    {
+      "user": {
+        "login": "theGove",
+        "id": 24496385,
+        "node_id": "MDQ6VXNlcjI0NDk2Mzg1",
+        "avatar_url": "https://avatars.githubusercontent.com/u/24496385?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/theGove",
+        "html_url": "https://github.com/theGove",
+        "followers_url": "https://api.github.com/users/theGove/followers",
+        "following_url": "https://api.github.com/users/theGove/following{/other_user}",
+        "gists_url": "https://api.github.com/users/theGove/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/theGove/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/theGove/subscriptions",
+        "organizations_url": "https://api.github.com/users/theGove/orgs",
+        "repos_url": "https://api.github.com/users/theGove/repos",
+        "events_url": "https://api.github.com/users/theGove/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/theGove/received_events",
+        "type": "User",
+        "site_admin": false
+      },
+      "version": "cede65cfdd51bceb66e1c674ff7ebf3706267cfd",
+      "committed_at": "2022-01-06T12:41:19Z",
+      "change_status": {
+        "total": 8,
+        "additions": 3,
+        "deletions": 5
+      },
+      "url": "https://api.github.com/gists/f8e5fc20cff0c19a27765e7ce5fe54fe/cede65cfdd51bceb66e1c674ff7ebf3706267cfd"
+    },
+    {
+      "user": {
+        "login": "theGove",
+        "id": 24496385,
+        "node_id": "MDQ6VXNlcjI0NDk2Mzg1",
+        "avatar_url": "https://avatars.githubusercontent.com/u/24496385?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/theGove",
+        "html_url": "https://github.com/theGove",
+        "followers_url": "https://api.github.com/users/theGove/followers",
+        "following_url": "https://api.github.com/users/theGove/following{/other_user}",
+        "gists_url": "https://api.github.com/users/theGove/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/theGove/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/theGove/subscriptions",
+        "organizations_url": "https://api.github.com/users/theGove/orgs",
+        "repos_url": "https://api.github.com/users/theGove/repos",
+        "events_url": "https://api.github.com/users/theGove/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/theGove/received_events",
+        "type": "User",
+        "site_admin": false
+      },
+      "version": "7ca1055109d52d0728ff1f32018904efba99ce9e",
+      "committed_at": "2022-01-06T12:17:12Z",
+      "change_status": {
+        "total": 521,
+        "additions": 520,
+        "deletions": 1
+      },
+      "url": "https://api.github.com/gists/f8e5fc20cff0c19a27765e7ce5fe54fe/7ca1055109d52d0728ff1f32018904efba99ce9e"
+    },
+    {
+      "user": {
+        "login": "jade-addin",
+        "id": 97227368,
+        "node_id": "U_kgDOBcuSaA",
+        "avatar_url": "https://avatars.githubusercontent.com/u/97227368?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/jade-addin",
+        "html_url": "https://github.com/jade-addin",
+        "followers_url": "https://api.github.com/users/jade-addin/followers",
+        "following_url": "https://api.github.com/users/jade-addin/following{/other_user}",
+        "gists_url": "https://api.github.com/users/jade-addin/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/jade-addin/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/jade-addin/subscriptions",
+        "organizations_url": "https://api.github.com/users/jade-addin/orgs",
+        "repos_url": "https://api.github.com/users/jade-addin/repos",
+        "events_url": "https://api.github.com/users/jade-addin/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/jade-addin/received_events",
+        "type": "User",
+        "site_admin": false
+      },
+      "version": "fc8955079b6047dd86331d5a8f846834db3b1ec5",
+      "committed_at": "2022-01-06T11:35:46Z",
+      "change_status": {
+        "total": 2,
+        "additions": 1,
+        "deletions": 1
+      },
+      "url": "https://api.github.com/gists/f8e5fc20cff0c19a27765e7ce5fe54fe/fc8955079b6047dd86331d5a8f846834db3b1ec5"
+    },
+    {
+      "user": {
+        "login": "theGove",
+        "id": 24496385,
+        "node_id": "MDQ6VXNlcjI0NDk2Mzg1",
+        "avatar_url": "https://avatars.githubusercontent.com/u/24496385?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/theGove",
+        "html_url": "https://github.com/theGove",
+        "followers_url": "https://api.github.com/users/theGove/followers",
+        "following_url": "https://api.github.com/users/theGove/following{/other_user}",
+        "gists_url": "https://api.github.com/users/theGove/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/theGove/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/theGove/subscriptions",
+        "organizations_url": "https://api.github.com/users/theGove/orgs",
+        "repos_url": "https://api.github.com/users/theGove/repos",
+        "events_url": "https://api.github.com/users/theGove/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/theGove/received_events",
+        "type": "User",
+        "site_admin": false
+      },
+      "version": "a46de878ee6ab8d7227f26e93a41d2d5ebfb962f",
+      "committed_at": "2022-01-06T11:35:28Z",
+      "change_status": {
+        "total": 2,
+        "additions": 1,
+        "deletions": 1
+      },
+      "url": "https://api.github.com/gists/f8e5fc20cff0c19a27765e7ce5fe54fe/a46de878ee6ab8d7227f26e93a41d2d5ebfb962f"
+    },
+    {
+      "user": {
+        "login": "jade-addin",
+        "id": 97227368,
+        "node_id": "U_kgDOBcuSaA",
+        "avatar_url": "https://avatars.githubusercontent.com/u/97227368?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/jade-addin",
+        "html_url": "https://github.com/jade-addin",
+        "followers_url": "https://api.github.com/users/jade-addin/followers",
+        "following_url": "https://api.github.com/users/jade-addin/following{/other_user}",
+        "gists_url": "https://api.github.com/users/jade-addin/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/jade-addin/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/jade-addin/subscriptions",
+        "organizations_url": "https://api.github.com/users/jade-addin/orgs",
+        "repos_url": "https://api.github.com/users/jade-addin/repos",
+        "events_url": "https://api.github.com/users/jade-addin/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/jade-addin/received_events",
+        "type": "User",
+        "site_admin": false
+      },
+      "version": "e4d6ae5ede79437b8b429c6514dd814d98763d3f",
+      "committed_at": "2022-01-06T11:12:41Z",
+      "change_status": {
+
+      },
+      "url": "https://api.github.com/gists/f8e5fc20cff0c19a27765e7ce5fe54fe/e4d6ae5ede79437b8b429c6514dd814d98763d3f"
+    }
+  ],
+  "truncated": false
+}
